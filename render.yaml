@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: talent-show-waitlist
-    env: python
-    buildCommand: ""
-    startCommand: gunicorn app:app
-    envVars:
-      - key: MONGO_URI
-        value: your_mongodb_uri
