@@ -6,4 +6,4 @@ services:
     startCommand: gunicorn app:app
     envVars:
       - key: MONGO_URI
-        value: your_mongo_connection_string
+        value: your_mongodb_uri
