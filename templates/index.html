@@ -15,6 +15,27 @@
           },
           backdropBlur: {
             xs: '2px',
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-slow': 'bounce 2s infinite',
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.5s ease-out',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            }
           }
         },
       },
@@ -23,13 +44,25 @@
   <style type="text/tailwindcss">
     @layer components {
       .input-field {
-        @apply w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-white/30 focus:border-white/30 transition-all duration-200 bg-white/10 backdrop-blur-sm text-white placeholder-white/70;
+        @apply w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-white/30 focus:border-white/30 transition-all duration-200 bg-white/10 backdrop-blur-sm text-white placeholder-white/70 focus:bg-white/15 focus:scale-105;
+      }
+      .input-field:focus {
+        transform: scale(1.02);
       }
       .btn-primary {
-        @apply bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/30 border border-white/20;
+        @apply bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/30 border border-white/20 hover:border-white/40 active:scale-95;
       }
       .glass-card {
-        @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl;
+        @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl hover:bg-white/15 transition-all duration-300;
+      }
+      .floating-element {
+        animation: float 6s ease-in-out infinite;
+      }
+      .progress-bar {
+        @apply h-1 bg-white/20 rounded-full overflow-hidden;
+      }
+      .progress-fill {
+        @apply h-full bg-gradient-to-r from-purple-400 to-pink-400 transition-all duration-300 ease-out;
       }
     }
   </style>
@@ -37,78 +70,232 @@
 <body class="min-h-screen relative overflow-x-hidden">
   <!-- Background Image at Footer -->
   <div class="fixed bottom-0 left-0 right-0 z-0">
-    <img src="{{ url_for('static', filename='Untitled-2.png') }}"
-         alt="Background"
+    <img src="{{ url_for('static', filename='Untitled-2.png') }}" 
+         alt="Background" 
          class="w-full h-auto object-cover opacity-80">
   </div>
-
+  
   <!-- Gradient Overlay -->
   <div class="fixed inset-0 bg-gradient-to-br from-purple-900/80 via-blue-900/80 to-indigo-900/80 z-10"></div>
-
+  
+  <!-- Floating Elements -->
+  <div class="fixed inset-0 z-15 pointer-events-none">
+    <div class="floating-element absolute top-20 left-10 w-4 h-4 bg-white/20 rounded-full"></div>
+    <div class="floating-element absolute top-40 right-20 w-6 h-6 bg-purple-400/30 rounded-full" style="animation-delay: -2s;"></div>
+    <div class="floating-element absolute bottom-40 left-20 w-3 h-3 bg-pink-400/40 rounded-full" style="animation-delay: -4s;"></div>
+    <div class="floating-element absolute top-60 right-10 w-5 h-5 bg-blue-400/30 rounded-full" style="animation-delay: -1s;"></div>
+  </div>
+  
   <!-- Content Container -->
   <div class="relative z-20 min-h-screen flex flex-col">
     <!-- Header Image -->
-    <div class="flex justify-center pt-8 pb-4">
-      <img src="{{ url_for('static', filename='Untitled-4.png') }}"
-           alt="Creative Hunt Header"
-           class="max-w-sm w-full h-auto object-contain">
+    <div class="flex justify-center pt-8 pb-4 animate-fade-in">
+      <img src="{{ url_for('static', filename='Untitled-4.png') }}" 
+           alt="Creative Hunt Header" 
+           class="max-w-sm w-full h-auto object-contain hover:scale-105 transition-transform duration-300 px-20">
     </div>
-
+    
     <!-- Main Content -->
     <div class="flex-1 flex items-center justify-center px-4 py-8">
-      <div class="w-full max-w-md">
-        <div class="glass-card p-8">
+      <div class="w-full max-w-md animate-slide-up">
+        <div class="glass-card p-8 hover:shadow-3xl transition-all duration-300">
           <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-white mb-2">Join the Talent Show</h1>
-            <p class="text-white/80">Show us what you've got and be part of something amazing!</p>
-          </div>
-
-          <form method="POST" class="space-y-6">
-            <div>
-              <label for="name" class="block text-sm font-medium text-white/90 mb-2">Full Name</label>
-              <input type="text" id="name" name="name" required
-                     class="input-field"
-                     placeholder="John Doe">
+            <h1 class="text-3xl font-bold text-white mb-2 animate-fade-in">Join the Talent Show</h1>
+            <p class="text-white/80 animate-fade-in" style="animation-delay: 0.2s;">Show us what you've got and be part of something amazing!</p>
+            
+            <!-- Progress Bar -->
+            <div class="mt-6 mb-2">
+              <div class="progress-bar">
+                <div class="progress-fill w-0" id="progressBar"></div>
+              </div>
+              <p class="text-xs text-white/60 mt-2">
+                <span id="progressText">Let's get started!</span>
+              </p>
             </div>
-
-            <div>
-              <label for="age" class="block text-sm font-medium text-white/90 mb-2">Age</label>
+          </div>
+          
+          <form method="POST" class="space-y-6" id="talentForm">
+            <div class="animate-fade-in" style="animation-delay: 0.3s;">
+              <label for="name" class="block text-sm font-medium text-white/90 mb-2 flex items-center">
+                <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-2 text-xs">1</span>
+                Full Name
+              </label>
+              <input type="text" id="name" name="name" required 
+                     class="input-field"
+                     placeholder="John Doe"
+                     oninput="updateProgress()">
+            </div>
+            
+            <div class="animate-fade-in" style="animation-delay: 0.4s;">
+              <label for="age" class="block text-sm font-medium text-white/90 mb-2 flex items-center">
+                <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-2 text-xs">2</span>
+                Age
+              </label>
               <input type="number" id="age" name="age" required min="1" max="120"
                      class="input-field"
-                     placeholder="25">
+                     placeholder="25"
+                     oninput="updateProgress()">
             </div>
-
-            <div>
-              <label for="talent" class="block text-sm font-medium text-white/90 mb-2">Your Talent</label>
+            
+            <div class="animate-fade-in" style="animation-delay: 0.5s;">
+              <label for="talent" class="block text-sm font-medium text-white/90 mb-2 flex items-center">
+                <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-2 text-xs">3</span>
+                Your Talent
+              </label>
               <input type="text" id="talent" name="talent" required
                      class="input-field"
-                     placeholder="Singing, Dancing, Magic, etc.">
+                     placeholder="Singing, Dancing, Magic, etc."
+                     oninput="updateProgress()">
             </div>
-
-            <div>
-              <label for="image_url" class="block text-sm font-medium text-white/90 mb-2">
-                Link to Image/Video Proof
-                <span class="text-xs text-white/60 block mt-1">(YouTube, TikTok, Twitter, Facebook etc.)</span>
+            
+            <div class="animate-fade-in" style="animation-delay: 0.6s;">
+              <label for="image_url" class="block text-sm font-medium text-white/90 mb-2 flex items-center">
+                <span class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-2 text-xs">4</span>
+                Link to Video/Image Proof
+                <span class="ml-2 text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-full">Videos Preferred!</span>
               </label>
               <input type="url" id="image_url" name="image_url" required
                      class="input-field"
-                     placeholder="https://example.com/your-talent">
+                     placeholder="https://youtube.com/watch?v=... or https://tiktok.com/..."
+                     oninput="updateProgress(); detectMediaType()">
+              <div class="text-xs text-white/60 mt-2 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                YouTube, TikTok, Instagram, Twitter, Facebook, Vimeo supported
+              </div>
+              <div id="mediaPreview" class="mt-3 hidden">
+                <div class="flex items-center space-x-2 text-sm">
+                  <div id="mediaIcon"></div>
+                  <span id="mediaType" class="font-medium"></span>
+                </div>
+              </div>
             </div>
-
-            <div class="pt-2">
-              <button type="submit" class="w-full btn-primary py-3 px-6">
-                Join Waitlist
-                <span class="ml-2">→</span>
+            
+            <div class="pt-2 animate-fade-in" style="animation-delay: 0.7s;">
+              <button type="submit" class="w-full btn-primary py-3 px-6 group" id="submitBtn" disabled>
+                <span class="flex items-center justify-center">
+                  <span id="submitText">Complete Form First</span>
+                  <svg class="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </svg>
+                </span>
               </button>
             </div>
           </form>
         </div>
-
-        <div class="mt-6 text-center text-sm text-white/70">
-          <p>Questions? <a href="#" class="font-medium text-white hover:text-white/80 transition-colors">Contact us</a></p>
+        
+        <div class="mt-6 text-center text-sm text-white/70 animate-fade-in" style="animation-delay: 0.8s;">
+          <p>Questions? <a href="#" class="font-medium text-white hover:text-white/80 transition-colors underline underline-offset-2">Contact us</a></p>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    function updateProgress() {
+      const form = document.getElementById('talentForm');
+      const inputs = form.querySelectorAll('input[required]');
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+      const submitBtn = document.getElementById('submitBtn');
+      const submitText = document.getElementById('submitText');
+      
+      let filledInputs = 0;
+      inputs.forEach(input => {
+        if (input.value.trim() !== '') {
+          filledInputs++;
+        }
+      });
+      
+      const progress = (filledInputs / inputs.length) * 100;
+      progressBar.style.width = progress + '%';
+      
+      const messages = [
+        "Let's get started!",
+        "Great start! Keep going...",
+        "Halfway there! You're doing amazing!",
+        "Almost done! One more step...",
+        "Perfect! Ready to join the show! 🎭"
+      ];
+      
+      const messageIndex = Math.min(filledInputs, messages.length - 1);
+      progressText.textContent = messages[messageIndex];
+      
+      if (filledInputs === inputs.length) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.classList.add('animate-pulse-slow');
+        submitText.textContent = 'Join the Waitlist';
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.classList.remove('animate-pulse-slow');
+        submitText.textContent = `${4 - filledInputs} more field${4 - filledInputs !== 1 ? 's' : ''} to go`;
+      }
+    }
+    
+    function detectMediaType() {
+      const urlInput = document.getElementById('image_url');
+      const mediaPreview = document.getElementById('mediaPreview');
+      const mediaIcon = document.getElementById('mediaIcon');
+      const mediaType = document.getElementById('mediaType');
+      const url = urlInput.value.toLowerCase();
+      
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        showMediaPreview('🎬', 'YouTube Video Detected', 'text-red-400');
+      } else if (url.includes('tiktok.com')) {
+        showMediaPreview('🎵', 'TikTok Video Detected', 'text-pink-400');
+      } else if (url.includes('instagram.com')) {
+        showMediaPreview('📸', 'Instagram Content Detected', 'text-purple-400');
+      } else if (url.includes('twitter.com') || url.includes('x.com')) {
+        showMediaPreview('🐦', 'Twitter/X Content Detected', 'text-blue-400');
+      } else if (url.includes('facebook.com')) {
+        showMediaPreview('📘', 'Facebook Content Detected', 'text-blue-600');
+      } else if (url.includes('vimeo.com')) {
+        showMediaPreview('🎥', 'Vimeo Video Detected', 'text-cyan-400');
+      } else if (url && (url.includes('http') || url.includes('www'))) {
+        showMediaPreview('🔗', 'Link Detected', 'text-green-400');
+      } else {
+        mediaPreview.classList.add('hidden');
+      }
+      
+      function showMediaPreview(icon, text, colorClass) {
+        mediaIcon.textContent = icon;
+        mediaType.textContent = text;
+        mediaType.className = `font-medium ${colorClass}`;
+        mediaPreview.classList.remove('hidden');
+        mediaPreview.classList.add('animate-fade-in');
+      }
+    }
+    
+    // Add form submission animation
+    document.getElementById('talentForm').addEventListener('submit', function(e) {
+      const submitBtn = document.getElementById('submitBtn');
+      const submitText = document.getElementById('submitText');
+      
+      submitText.textContent = 'Joining...';
+      submitBtn.classList.add('animate-pulse');
+      
+      // Add a small delay to show the animation
+      setTimeout(() => {
+        // Form will submit naturally
+      }, 500);
+    });
+    
+    // Initialize progress on page load
+    updateProgress();
+    
+    // Add input focus animations
+    document.querySelectorAll('.input-field').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('animate-pulse-slow');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('animate-pulse-slow');
+      });
+    });
+  </script>
 </body>
 </html>

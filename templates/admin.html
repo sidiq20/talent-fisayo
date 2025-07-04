@@ -3,61 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Talent Show</title>
+  <title>Admin Dashboard - Talent Show</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
   <style type="text/tailwindcss">
     @layer components {
-      .card {
-        @apply bg-white p-6 rounded-lg border border-gray-200 mb-4 shadow-sm hover:shadow transition-shadow duration-200;
+      .participant-card {
+        @apply bg-white border border-gray-100 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:border-gray-200 hover:-translate-y-1;
+      }
+      .stat-card {
+        @apply bg-black text-white rounded-xl p-6 border border-gray-800;
+      }
+      .badge {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800;
+      }
+      .media-container {
+        @apply w-32 h-32 lg:w-40 lg:h-32 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 relative;
+      }
+      .video-overlay {
+        @apply absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200 cursor-pointer;
       }
     }
   </style>
 </head>
-<body class="min-h-screen bg-white font-sans">
-  <div class="container mx-auto px-4 py-12 max-w-4xl">
-    <div class="text-center mb-12">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
-        <i class="fas fa-tools mr-2 text-blue-600"></i>
-        Talent Show Waitlist
-      </h1>
-      <p class="text-gray-700">Admin Dashboard</p>
-    </div>
-    
-    <div class="space-y-6">
-      {% if participants|length == 0 %}
-        <div class="text-center py-12">
-          <p class="text-gray-600 text-lg"><i class="fas fa-face-frown mr-2"></i>No one has joined the waitlist yet 😢</p>
-        </div>
-      {% else %}
-        {% for p in participants %}
-          <div class="card">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div class="space-y-2">
-                <h2 class="text-xl font-semibold text-gray-900">
-                  <i class="fas fa-user mr-2 text-gray-600"></i>{{ p.name }} <span class="text-gray-600">({{ p.age }})</span>
-                </h2>
-                <p class="text-gray-700">
-                  <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
-                  <strong class="font-medium">Talent:</strong> {{ p.talent }}
-                </p>
-                {% if p.image %}
-                  <a href="{{ p.image }}" target="_blank" class="text-sm text-gray-600 hover:text-gray-900 inline-block mt-2">
-                    <i class="fas fa-photo-video mr-1 text-indigo-600"></i>View Submission →
-                  </a>
-                {% endif %}
-              </div>
-              {% if p.image %}
-                <div class="flex-shrink-0">
-                  <img src="{{ p.image }}" alt="{{ p.name }}'s talent submission" class="h-24 w-24 object-cover rounded border border-gray-200" />
-                </div>
-              {% endif %}
+<body class="min-h-screen bg-black text-white font-sans antialiased">
+  <div class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-black/50 backdrop-blur-sm sticky top-0 z-10">
+      <div class="container mx-auto px-6 py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+            <p class="text-gray-400 mt-1 font-medium">Talent Show Waitlist Management</p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="stat-card">
+              <div class="text-2xl font-bold">{{ participants|length }}</div>
+              <div class="text-gray-400 text-sm font-medium">Total Participants</div>
             </div>
           </div>
-        {% endfor %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+      {% if participants|length == 0 %}
+        <!-- Empty State -->
+        <div class="text-center py-20">
+          <div class="w-24 h-24 mx-auto mb-6 bg-gray-800 rounded-full flex items-center justify-center">
+            <svg class="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-300 mb-2">No Participants Yet</h3>
+          <p class="text-gray-500 max-w-md mx-auto">The waitlist is currently empty. Participants will appear here once they start joining.</p>
+        </div>
+      {% else %}
+        <!-- Participants Grid -->
+        <div class="space-y-6">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-bold">Participants</h2>
+            <div class="badge">
+              {{ participants|length }} {% if participants|length == 1 %}entry{% else %}entries{% endif %}
+            </div>
+          </div>
+          
+          <div class="grid gap-6">
+            {% for p in participants %}
+              <div class="participant-card group">
+                <div class="flex flex-col lg:flex-row lg:items-start gap-6">
+                  <!-- Participant Info -->
+                  <div class="flex-1 space-y-4">
+                    <div class="flex items-start justify-between">
+                      <div>
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-black transition-colors">
+                          {{ p.name }}
+                        </h3>
+                        <div class="flex items-center mt-1 space-x-3">
+                          <span class="text-sm font-medium text-gray-600">Age {{ p.age }}</span>
+                          <span class="w-1 h-1 bg-gray-400 rounded-full"></span>
+                          <span class="text-sm text-gray-500">Participant</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                      <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <p class="font-semibold text-gray-900 text-sm">Talent</p>
+                          <p class="text-gray-700 mt-1">{{ p.talent }}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% if p.image %}
+                      <div class="flex items-center space-x-2">
+                        {% set is_video = p.image and ('youtube.com' in p.image or 'youtu.be' in p.image or 'tiktok.com' in p.image or 'instagram.com' in p.image or 'facebook.com' in p.image or 'twitter.com' in p.image or 'x.com' in p.image or 'vimeo.com' in p.image) %}
+                        {% if is_video %}
+                          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4V8a2 2 0 012-2h8a2 2 0 012 2v2M7 16v2a2 2 0 002 2h6a2 2 0 002-2v-2"></path>
+                          </svg>
+                          <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">VIDEO</span>
+                        {% else %}
+                          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                          </svg>
+                          <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">IMAGE</span>
+                        {% endif %}
+                        <a href="{{ p.image }}" target="_blank" 
+                           class="text-sm font-medium text-black hover:text-gray-700 transition-colors underline underline-offset-2">
+                          {% if is_video %}Watch Submission{% else %}View Submission{% endif %}
+                        </a>
+                      </div>
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Media Preview -->
+                  {% if p.image %}
+                    <div class="flex-shrink-0">
+                      <div class="media-container">
+                        {% set is_video = p.image and ('youtube.com' in p.image or 'youtu.be' in p.image or 'tiktok.com' in p.image or 'instagram.com' in p.image or 'facebook.com' in p.image or 'twitter.com' in p.image or 'x.com' in p.image or 'vimeo.com' in p.image) %}
+                        
+                        {% if is_video %}
+                          <!-- Video Thumbnail with Play Button -->
+                          <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative">
+                            <div class="text-center">
+                              <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+                                <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
+                              <p class="text-white text-xs font-medium">Video</p>
+                              <p class="text-white/70 text-xs">Click to watch</p>
+                            </div>
+                            <a href="{{ p.image }}" target="_blank" class="video-overlay">
+                              <div class="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
+                            </a>
+                          </div>
+                        {% else %}
+                          <!-- Regular Image -->
+                          <img src="{{ p.image }}" 
+                               alt="{{ p.name }}'s talent submission" 
+                               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                               onerror="this.parentElement.innerHTML='<div class=\'w-full h-full bg-gray-200 flex items-center justify-center\'><svg class=\'w-8 h-8 text-gray-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'></path></svg></div>'" />
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
       {% endif %}
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 mt-20">
+      <div class="container mx-auto px-6 py-8">
+        <div class="text-center text-gray-500">
+          <p class="font-medium">Talent Show Admin Dashboard</p>
+          <p class="text-sm mt-1">Manage participants and submissions</p>
+        </div>
+      </div>
+    </footer>
   </div>
 </body>
 </html>
