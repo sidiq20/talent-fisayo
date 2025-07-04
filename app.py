@@ -30,7 +30,7 @@ def index():
         return redirect(url_for("index"))
     return render_template("index.html")
 
-@app.route("/admin")
+@app.route("/fisayo")
 def admin():
     participants = list(waitlist.find())
     return render_template("admin.html", participants=participants)
